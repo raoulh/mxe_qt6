@@ -33,3 +33,9 @@ Differences from the official repositories:
   * Most of the packages here are on the latest version
   * Up-to-date core packages, GLib, libsoup and pango.
   * GStreamer has only audio specific plugins.
+
+## Docker
+
+In the docker/ folder you can find a docker file to build the entire toolchain for x86 and x86-64. This image can be reused by build CI to build your own binaries.
+
+An already built docker image is available [Docker Hub](https://hub.docker.com/repository/docker/raoulh/mxe_qt6)
