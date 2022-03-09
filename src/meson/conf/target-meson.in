@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+echo "== Using MXE wrapper: @PREFIX@/bin/@TARGET@-meson"
+
+unset NO_MESON_CROSSFILE
+if echo -- "$@" | grep -Ewq "configure"; then
+    NO_MESON_CROSSFILE=1
+fi
+
+if [[ "$NO_MESON_CROSSFILE" == "1" ]]; then
+    echo "== Skip using Meson cross file: @MESON_CROSS_FILE@"
+    exec meson "$@"
+else
+    BUILD_TYPE=$(echo "@MESON_BUILD_TYPE@" | tr '[:upper:]' '[:lower:]')
+    echo "== Using Meson cross file: @MESON_CROSS_FILE@"
+    if ! ( echo "$@" | grep --silent "buildtype" ) ; then
+        echo "== Adding --buildtype=$BUILD_TYPE"
+        set -- "--buildtype=$BUILD_TYPE" "$@"
+    fi
+    exec meson \
+              --cross-file="@MESON_CROSS_FILE@" \
+              --default-library="@LIBTYPE@" \
+              --prefix="@PREFIX@/@TARGET@" \
+              "$@"
+fi
