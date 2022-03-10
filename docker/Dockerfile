@@ -167,3 +167,8 @@ ENV WINEARCH win32
 RUN mkdir /home/xclient/bin
 ENV PATH="$HOME/bin:${PATH}"
 
+#Fix host lrelease path that is not found by qmake
+RUN sudo ln -s /mxe/usr/x86_64-pc-linux-gnu/qt6/bin/lrelease /mxe/usr/i686-w64-mingw32.shared.posix/qt6/bin/lrelease && \
+    sudo ln -s /mxe/usr/x86_64-pc-linux-gnu/qt6/bin/lupdate /mxe/usr/i686-w64-mingw32.shared.posix/qt6/bin/lupdate && \
+    sudo ln -s /mxe/usr/x86_64-pc-linux-gnu/qt6/bin/lrelease /mxe/usr/x86_64-w64-mingw32.shared.posix/qt6/bin/lrelease && \
+    sudo ln -s /mxe/usr/x86_64-pc-linux-gnu/qt6/bin/lupdate /mxe/usr/x86_64-w64-mingw32.shared.posix/qt6/bin/lupdate
