@@ -4,13 +4,13 @@ PKG             := qt6-qtbase
 $(PKG)_WEBSITE  := https://www.qt.io/
 $(PKG)_DESCR    := Qt 6 Base
 $(PKG)_IGNORE   :=
-$(PKG)_VERSION  := 6.2.3
-$(PKG)_CHECKSUM := 34d6d0072e197241463c417ad72610c3d44e2efd6062868e9a95283103d75df4
+$(PKG)_VERSION  := 6.2.4
+$(PKG)_CHECKSUM := d9924d6fd4fa5f8e24458c87f73ef3dfc1e7c9b877a5407c040d89e6736e2634
 $(PKG)_FILE     := qtbase-everywhere-src-$($(PKG)_VERSION).tar.xz
 $(PKG)_SUBDIR   := qtbase-everywhere-src-$($(PKG)_VERSION)
 $(PKG)_URL      := https://download.qt.io/official_releases/qt/6.2/$($(PKG)_VERSION)/submodules/$($(PKG)_FILE)
 $(PKG)_TARGETS  := $(BUILD) $(MXE_TARGETS)
-$(PKG)_DEPS     := cc openssl pcre2 fontconfig freetype harfbuzz glib jpeg libpng zlib zstd sqlite mesa $(BUILD)~$(PKG) $(BUILD)~qt6-qttools
+$(PKG)_DEPS     := cc openssl fontconfig zlib zstd sqlite mesa $(BUILD)~$(PKG) $(BUILD)~qt6-qttools
 $(PKG)_DEPS_$(BUILD) :=
 $(PKG)_OO_DEPS_$(BUILD) += qt6-conf ninja
 
@@ -55,7 +55,7 @@ define $(PKG)_BUILD
         -DFEATURE_opengl=ON \
         -DFEATURE_opengl_dynamic=ON \
         -DFEATURE_use_gold_linker_alias=OFF \
-        -DFEATURE_glib=ON \
+        -DFEATURE_glib=OFF \
         -DFEATURE_icu=OFF \
         -DFEATURE_directfb=OFF \
         -DFEATURE_dbus=OFF \
@@ -68,11 +68,11 @@ define $(PKG)_BUILD
         -DFEATURE_style_windows=ON \
         -DFEATURE_style_windowsvista=ON \
         -DFEATURE_system_zlib=ON \
-        -DFEATURE_system_png=ON \
-        -DFEATURE_system_jpeg=ON \
-        -DFEATURE_system_pcre2=ON \
-        -DFEATURE_system_harfbuzz=ON \
-        -DFEATURE_system_sqlite=ON
+        -DFEATURE_qt_png=ON \
+        -DFEATURE_qt_jpeg=ON \
+        -DFEATURE_qt_pcre2=ON \
+        -DFEATURE_qt_harfbuzz=ON \
+        -DFEATURE_qt_sqlite=ON
 
     cmake --build '$(BUILD_DIR)' -j '$(JOBS)'
     cmake --install '$(BUILD_DIR)'
