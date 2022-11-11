@@ -3,12 +3,12 @@
 PKG             := gnutls
 $(PKG)_WEBSITE  := https://www.gnu.org/software/gnutls/
 $(PKG)_DESCR    := The GnuTLS Transport Layer Security Library
-$(PKG)_VERSION  := 3.7.3
-$(PKG)_CHECKSUM := fc59c43bc31ab20a6977ff083029277a31935b8355ce387b634fa433f8f6c49a
+$(PKG)_VERSION  := 3.7.8
+$(PKG)_CHECKSUM := c58ad39af0670efe6a8aee5e3a8b2331a1200418b64b7c51977fb396d4617114
 $(PKG)_SUBDIR   := gnutls-$($(PKG)_VERSION)
 $(PKG)_FILE     := gnutls-$($(PKG)_VERSION).tar.xz
 $(PKG)_URL      := https://gnupg.org/ftp/gcrypt/gnutls/v3.7/$($(PKG)_FILE)
-$(PKG)_URL_2    := https://www.mirrorservice.org/sites/ftp.gnupg.org/gcrypt/gnutls/v3.5/$($(PKG)_FILE)
+$(PKG)_URL_2    := https://www.mirrorservice.org/sites/ftp.gnupg.org/gcrypt/gnutls/v3.7/$($(PKG)_FILE)
 $(PKG)_DEPS     := cc gettext gmp libidn2 libtasn1 libunistring nettle zlib
 
 define $(PKG)_UPDATE
@@ -19,7 +19,7 @@ define $(PKG)_UPDATE
 endef
 
 define $(PKG)_BUILD
-    cd '$(1)' && autoreconf -fi && ./configure \
+    cd '$(1)' && ./configure \
         $(MXE_CONFIGURE_OPTS) \
         --disable-rpath \
         --disable-nls \

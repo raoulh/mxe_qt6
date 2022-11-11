@@ -4,8 +4,8 @@ PKG             := gcc
 $(PKG)_WEBSITE  := https://gcc.gnu.org/
 $(PKG)_DESCR    := GCC, the GNU Compiler Collection
 $(PKG)_IGNORE   :=
-$(PKG)_VERSION  := 11.2.0
-$(PKG)_CHECKSUM := d08edc536b54c372a1010ff6619dd274c0f1603aa49212ba20f7aa2cda36fa8b
+$(PKG)_VERSION  := 12.2.0
+$(PKG)_CHECKSUM := e549cf9cf3594a00e27b6589d4322d70e0720cdd213f39beb4181e06926230ff
 $(PKG)_SUBDIR   := gcc-$($(PKG)_VERSION)
 $(PKG)_FILE     := gcc-$($(PKG)_VERSION).tar.xz
 $(PKG)_URL      := https://ftp.gnu.org/gnu/gcc/gcc-$($(PKG)_VERSION)/$($(PKG)_FILE)
@@ -62,7 +62,7 @@ define $(PKG)_BUILD_mingw-w64
         --enable-sdk=all \
         --enable-idl \
         --enable-secure-api \
-        --with-default-msvcrt=msvcrt \
+        --with-default-msvcrt=ucrt \
         $(mingw-w64-headers_CONFIGURE_OPTS)
     $(MAKE) -C '$(BUILD_DIR).headers' install
 
@@ -76,7 +76,7 @@ define $(PKG)_BUILD_mingw-w64
     cd '$(BUILD_DIR).crt' && '$(BUILD_DIR)/$(mingw-w64_SUBDIR)/mingw-w64-crt/configure' \
         --host='$(TARGET)' \
         --prefix='$(PREFIX)/$(TARGET)' \
-        --with-default-msvcrt=msvcrt \
+        --with-default-msvcrt=ucrt \
         @gcc-crt-config-opts@ \
         $(mingw-w64-crt_CONFIGURE_OPTS)
     $(MAKE) -C '$(BUILD_DIR).crt' -j '$(JOBS)' || $(MAKE) -C '$(BUILD_DIR).crt' -j '$(JOBS)'

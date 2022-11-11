@@ -1,0 +1,23 @@
+This file is part of MXE. See LICENSE.md for licensing information.
+
+Contains ad hoc patches for cross building.
+
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Raoul Hecky <r.hecky@emc-partner.ch>
+Date: Mon, 24 Oct 2022 14:22:05 +0200
+Subject: [PATCH 1/1] Fix build with unused variables for host
+
+
+diff --git a/src/quick/scenegraph/qsgrhisupport.cpp b/src/quick/scenegraph/qsgrhisupport.cpp
+index 1111111..2222222 100644
+--- a/src/quick/scenegraph/qsgrhisupport.cpp
++++ b/src/quick/scenegraph/qsgrhisupport.cpp
+@@ -1402,6 +1402,8 @@ void QSGRhiSupport::applySwapChainFormat(QRhiSwapChain *scWithWindowSet)
+ 
+ QRhiTexture::Format QSGRhiSupport::toRhiTextureFormat(uint nativeFormat, QRhiTexture::Flags *flags) const
+ {
++    Q_UNUSED(flags);
++    Q_UNUSED(nativeFormat);
+     switch (m_rhiBackend) {
+ #if QT_CONFIG(vulkan)
+     case QRhi::Vulkan:

@@ -740,7 +740,7 @@ $(PREFIX)/$(3)/installed/$(1): $(PKG_MAKEFILES) \
 	            echo 'Failed to build package $(1) for target $(3)!'; \
 	            echo '------------------------------------------------------------'; \
 	            $(if $(findstring undefined, $(origin MXE_VERBOSE)),\
-	                tail -n 10 '$(LOG_DIR)/$(1)_$(3)' | $(SED) -n '/./p';, \
+	                tail -n 1000 '$(LOG_DIR)/$(1)_$(3)' | $(SED) -n '/./p';, \
 	                $(SED) -n '/./p' '$(LOG_DIR)/$(1)_$(3)';) \
 	            echo '------------------------------------------------------------'; \
 	            echo '[log]      $(LOG_DIR)/$(1)_$(3)'; \

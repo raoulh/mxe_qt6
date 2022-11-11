@@ -4,8 +4,8 @@ PKG             := gettext
 $(PKG)_WEBSITE  := https://www.gnu.org/software/gettext/
 $(PKG)_DESCR    := GNU gettext
 $(PKG)_IGNORE   :=
-$(PKG)_VERSION  := 0.21
-$(PKG)_CHECKSUM := d20fcbb537e02dcf1383197ba05bd0734ef7bf5db06bdb241eb69b7d16b73192
+$(PKG)_VERSION  := 0.21.1
+$(PKG)_CHECKSUM := 50dbc8f39797950aa2c98e939947c527e5ac9ebd2c1b99dd7b06ba33a6767ae6
 $(PKG)_SUBDIR   := gettext-$($(PKG)_VERSION)
 $(PKG)_FILE     := gettext-$($(PKG)_VERSION).tar.xz
 $(PKG)_URL      := https://ftp.gnu.org/gnu/gettext/$($(PKG)_FILE)
@@ -21,8 +21,8 @@ define $(PKG)_UPDATE
     $(WGET) -q -O- 'https://ftp.gnu.org/gnu/gettext/' | \
     grep 'gettext-' | \
     $(SED) -n 's,.*gettext-\([0-9][^>]*\)\.tar.*,\1,p' | \
-    $(SORT) -Vr | \
-    head -1
+    $(SORT) -V | \
+    tail -1
 endef
 
 define $(PKG)_BUILD

@@ -4,8 +4,8 @@ PKG             := ffmpeg
 $(PKG)_WEBSITE  := https://ffmpeg.org/
 $(PKG)_DESCR    := A complete, cross-platform solution to record, convert and stream audio and video.
 $(PKG)_IGNORE   :=
-$(PKG)_VERSION  := 5.0
-$(PKG)_CHECKSUM := c0130b8db2c763430fd1c6905288d61bc44ee0548ad5fcd2dfd650b88432bed9
+$(PKG)_VERSION  := 5.1.2
+$(PKG)_CHECKSUM := 39a0bcc8d98549f16c570624678246a6ac736c066cebdb409f9502e915b22f2b
 $(PKG)_SUBDIR   := $(PKG)-$($(PKG)_VERSION)
 $(PKG)_FILE     := $(PKG)-$($(PKG)_VERSION).tar.bz2
 $(PKG)_URL      := https://ffmpeg.org/releases/$($(PKG)_FILE)
@@ -19,8 +19,8 @@ define $(PKG)_UPDATE
     $(WGET) -q -O- 'https://ffmpeg.org/releases/' | \
     $(SED) -n 's,.*ffmpeg-\([0-9][^>]*\)\.tar.*,\1,p' | \
     grep -v 'alpha\|beta\|rc\|git' | \
-    $(SORT) -Vr | \
-    head -1
+    $(SORT) -V | \
+    tail -1
 endef
 
 define $(PKG)_BUILD
@@ -40,6 +40,7 @@ define $(PKG)_BUILD
         --disable-manpages \
         --disable-podpages \
         --disable-txtpages \
+        --disable-libcdio \
         --enable-gpl \
         --enable-version3 \
         --enable-gnutls \

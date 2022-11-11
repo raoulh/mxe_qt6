@@ -4,20 +4,20 @@ PKG             := qt6-qtbase
 $(PKG)_WEBSITE  := https://www.qt.io/
 $(PKG)_DESCR    := Qt 6 Base
 $(PKG)_IGNORE   :=
-$(PKG)_VERSION  := 6.2.4
-$(PKG)_CHECKSUM := d9924d6fd4fa5f8e24458c87f73ef3dfc1e7c9b877a5407c040d89e6736e2634
+$(PKG)_VERSION  := 6.4.0
+$(PKG)_CHECKSUM := cb6475a0bd8567c49f7ffbb072a05516ee6671171bed55db75b22b94ead9b37d
 $(PKG)_FILE     := qtbase-everywhere-src-$($(PKG)_VERSION).tar.xz
 $(PKG)_SUBDIR   := qtbase-everywhere-src-$($(PKG)_VERSION)
-$(PKG)_URL      := https://download.qt.io/official_releases/qt/6.2/$($(PKG)_VERSION)/submodules/$($(PKG)_FILE)
+$(PKG)_URL      := https://download.qt.io/official_releases/qt/6.4/$($(PKG)_VERSION)/submodules/$($(PKG)_FILE)
 $(PKG)_TARGETS  := $(BUILD) $(MXE_TARGETS)
 $(PKG)_DEPS     := cc openssl fontconfig zlib zstd sqlite mesa $(BUILD)~$(PKG) $(BUILD)~qt6-qttools
 $(PKG)_DEPS_$(BUILD) :=
 $(PKG)_OO_DEPS_$(BUILD) += qt6-conf ninja
 
 define $(PKG)_UPDATE
-    $(WGET) -q -O- https://download.qt.io/official_releases/qt/6.2/ | \
-    $(SED) -n 's,.*href="\(6\.2\.[^/]*\)/".*,\1,p' | \
-    sort |
+    $(WGET) -q -O- https://download.qt.io/official_releases/qt/6.4/ | \
+    $(SED) -n 's,.*href="\(6\.[0-9]*\.[^/]*\)/".*,\1,p' | \
+    $(SORT) -V | \
     tail -1
 endef
 
@@ -47,9 +47,12 @@ define $(PKG)_BUILD
         -DFEATURE_rpath=OFF \
         -DFEATURE_pkg_config=ON \
         -DFEATURE_accessibility=ON \
+        -DFEATURE_brotli=ON \
         -DFEATURE_fontconfig=OFF \
+        -DFEATURE_freetype=ON \
         -DFEATURE_harfbuzz=ON \
         -DFEATURE_pcre2=ON \
+        -DFEATURE_schannel=ON \
         -DFEATURE_openssl=ON \
         $(if $(BUILD_SHARED), -DFEATURE_openssl_linked=ON) \
         -DFEATURE_opengl=ON \
@@ -62,6 +65,8 @@ define $(PKG)_BUILD
         -DFEATURE_sql=ON \
         -DFEATURE_sql_sqlite=ON \
         -DFEATURE_sql_odbc=ON \
+        -DFEATURE_sql_mysql=OFF \
+        -DFEATURE_sql_psql=OFF \
         -DFEATURE_jpeg=ON \
         -DFEATURE_png=ON \
         -DFEATURE_gif=ON \
@@ -72,6 +77,7 @@ define $(PKG)_BUILD
         -DFEATURE_qt_jpeg=ON \
         -DFEATURE_qt_pcre2=ON \
         -DFEATURE_qt_harfbuzz=ON \
+        -DFEATURE_qt_freetype=ON \
         -DFEATURE_qt_sqlite=ON
 
     cmake --build '$(BUILD_DIR)' -j '$(JOBS)'
@@ -80,17 +86,21 @@ define $(PKG)_BUILD
 endef
 
 define $(PKG)_BUILD_$(BUILD)
-    cd '$(BUILD_DIR)' && '$(SOURCE_DIR)/configure' \
+    cd '$(BUILD_DIR)' && CXXFLAGS='$(CXXFLAGS) -Wno-unused-but-set-variable' '$(SOURCE_DIR)/configure' \
         -prefix '$(PREFIX)/$(TARGET)/qt6' \
         -static \
         -release \
         -opensource \
         -confirm-license \
-        -no-{eventfd,glib,icu,openssl,opengl,dbus,harfbuzz,xcb-xlib,xcb,xkbcommon} \
+        -developer-build \
+        -no-{accessibility,glib,openssl,opengl,dbus,fontconfig,icu,harfbuzz,xcb-xlib,xcb,xkbcommon,eventfd,evdev,gif,ico,libjpeg,pch} \
         -no-sql-{db2,ibase,mysql,oci,odbc,psql,sqlite} \
         -no-use-gold-linker \
         -nomake examples \
         -nomake tests \
+        -nomake benchmarks \
+        -nomake manual-tests \
+        -nomake minimal-static-tests \
         -make tools
 
     '$(TARGET)-cmake' --build '$(BUILD_DIR)' -j '$(JOBS)'

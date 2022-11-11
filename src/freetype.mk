@@ -4,12 +4,12 @@ PKG             := freetype
 $(PKG)_WEBSITE  := https://www.freetype.org/
 $(PKG)_DESCR    := FreeType is a freely available software library to render fonts
 $(PKG)_IGNORE   :=
-$(PKG)_VERSION  := 2.11.1
-$(PKG)_CHECKSUM := 3333ae7cfda88429c97a7ae63b7d01ab398076c3b67182e960e5684050f2c5c8
+$(PKG)_VERSION  := 2.12.1
+$(PKG)_CHECKSUM := 4766f20157cc4cf0cd292f80bf917f92d1c439b243ac3018debf6b9140c41a7f
 $(PKG)_SUBDIR   := freetype-$($(PKG)_VERSION)
 $(PKG)_FILE     := freetype-$($(PKG)_VERSION).tar.xz
 $(PKG)_URL      := https://$(SOURCEFORGE_MIRROR)/project/freetype/freetype2/$(shell echo '$($(PKG)_VERSION)' | cut -d . -f 1,2,3)/$($(PKG)_FILE)
-$(PKG)_DEPS     := cc bzip2 harfbuzz libpng zlib
+$(PKG)_DEPS     := cc meson-conf zlib bzip2 brotli libpng harfbuzz
 
 define $(PKG)_UPDATE
     $(WGET) -q -O- 'https://sourceforge.net/projects/freetype/files/freetype2/' | \
@@ -19,21 +19,31 @@ define $(PKG)_UPDATE
 endef
 
 define $(PKG)_BUILD_COMMON
-    cd '$(1)' && GNUMAKE=$(MAKE) ./configure --with-harfbuzz=yes \
-        $(MXE_CONFIGURE_OPTS) \
-        --enable-freetype-config \
+
+    cd '$(SOURCE_DIR)' && \
         LIBPNG_CFLAGS="`$(TARGET)-pkg-config libpng --cflags`" \
         LIBPNG_LDFLAGS="`$(TARGET)-pkg-config libpng --libs`" \
         FT2_EXTRA_LIBS="`$(TARGET)-pkg-config libpng --libs`" \
-        $(if $(BUILD_STATIC),HARFBUZZ_LIBS="`$(TARGET)-pkg-config harfbuzz --libs` -lharfbuzz_too -lfreetype_too `$(TARGET)-pkg-config glib-2.0 --libs`",)
-    $(MAKE) -C '$(1)' -j '$(JOBS)'
-    $(MAKE) -C '$(1)' -j 1 install
+        $(if $(BUILD_STATIC),HARFBUZZ_LIBS="`$(TARGET)-pkg-config harfbuzz --libs` -lharfbuzz_too -lfreetype_too `$(TARGET)-pkg-config glib-2.0 --libs`",) \
+        '$(TARGET)-meson' \
+        --buildtype='$(MESON_BUILD_TYPE)' \
+        -Dzlib=enabled \
+        -Dbzip2=enabled \
+        -Dbrotli=enabled \
+        -Dpng=enabled \
+        -Dharfbuzz=enabled \
+        -Dtests=disabled \
+        '$(BUILD_DIR)'
+
+    cd '$(BUILD_DIR)' && ninja
+    cd '$(BUILD_DIR)' && ninja install
+
     ln -sf '$(PREFIX)/$(TARGET)/bin/freetype-config' '$(PREFIX)/bin/$(TARGET)-freetype-config'
+
 endef
 
 define $(PKG)_BUILD
-    # alias libharfbuzz and libfreetype to satisfy circular dependence
-    # libfreetype should already have been created by freetype-bootstrap.mk
+    # Alias libharfbuzz and libfreetype to satisfy circular dependence libfreetype should already have been created by freetype-bootstrap.mk
     $(if $(BUILD_STATIC), ln -sf libharfbuzz.a '$(PREFIX)/$(TARGET)/lib/libharfbuzz_too.a' && ln -sf libfreetype.a '$(PREFIX)/$(TARGET)/lib/libfreetype_too.a',)
     $($(PKG)_BUILD_COMMON)
 endef

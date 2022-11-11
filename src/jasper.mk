@@ -4,8 +4,8 @@ PKG             := jasper
 $(PKG)_WEBSITE  := https://ece.engr.uvic.ca/~frodo/jasper/
 $(PKG)_DESCR    := JasPer Image Coding Toolkit
 $(PKG)_IGNORE   :=
-$(PKG)_VERSION  := 3.0.2
-$(PKG)_CHECKSUM := 3280c7b48ad53f956ce22ce719ac23ca7812cdeff0667e3914a5bc22592ad43f
+$(PKG)_VERSION  := 3.0.6
+$(PKG)_CHECKSUM := c79961bc00158f5b5dc5f5fcfa792fde9bebb024432689d0f9e3f95a097d0ec3
 $(PKG)_GH_CONF  := jasper-software/jasper/releases, version-
 $(PKG)_DEPS     := cc jpeg
 

@@ -1,4 +1,4 @@
-FROM ubuntu:20.04 as intermediate_builder
+FROM ubuntu:22.10 as intermediate_builder
 
 LABEL maintainer="raoul.hecky@gmail.com"
 LABEL description="Ubuntu image with Qt6 build with mxe"
@@ -32,7 +32,8 @@ RUN apt update && \
     p7zip-full \
     patch \
     perl \
-    python \
+    python3 \
+    python-is-python3 \
     ruby \
     sed \
     unzip \
@@ -40,14 +41,15 @@ RUN apt update && \
     xz-utils \
     meson \
     cmake \
-    python3-mako
+    python3-mako \
+    texinfo
 
 WORKDIR /mxe
 
 COPY mxe_mingw_qt6 /mxe
 
 RUN make dbus fontconfig freetds libmysqlclient openssl postgresql sqlite icu4c zstd -j4 JOBS=20
-RUN make jpeg libwebp xz minizip jasper tiff assimp lcms libmng libxml2 libxslt openssl libgit2 -j4 JOBS=20
+RUN make jpeg libwebp xz minizip jasper tiff assimp lcms libmng libxml2 openssl libgit2 -j4 JOBS=20
 
 RUN make qt6-qtbase -j4 JOBS=20
 RUN make qt6-qttools -j4 JOBS=20
@@ -56,14 +58,14 @@ RUN make qt6-qtsvg -j4 JOBS=20
 RUN make qt6-qtshadertools -j4 JOBS=20
 RUN make qt6-declarative -j4 JOBS=20
 RUN make qt6-qtactiveqt -j4 JOBS=20
-RUN make qt6-qt3d -j4 JOBS=20
+#RUN make qt6-qt3d -j4 JOBS=20
 RUN make qt6-qtcharts -j4 JOBS=20
 RUN make qt6-qtconnectivity -j4 JOBS=20
 RUN make qt6-qtcore5compat -j4 JOBS=20
-RUN make qt6-qtdatavis3d -j4 JOBS=20
+#RUN make qt6-qtdatavis3d -j4 JOBS=20
 RUN make qt6-qtnetworkauth -j4 JOBS=20
 RUN make qt6-qtpositioning -j4 JOBS=20
-RUN make qt6-qtquick3d -j4 JOBS=20
+#RUN make qt6-qtquick3d -j4 JOBS=20
 RUN make qt6-qtquicktimeline -j4 JOBS=20
 RUN make qt6-qtremoteobjects -j4 JOBS=20
 RUN make qt6-qtscxml -j4 JOBS=20
@@ -74,7 +76,7 @@ RUN make qt6-qttranslations -j4 JOBS=20
 RUN make qt6-qtwebsockets -j4 JOBS=20
 RUN make qt6-qtwebchannel -j4 JOBS=20
 RUN make qt6-qtwebview -j4 JOBS=20
-RUN make qt6-qtmultimedia -j4 JOBS=20
+#RUN make qt6-qtmultimedia -j4 JOBS=20
 RUN make qt6-qtvirtualkeyboard -j4 JOBS=20
 RUN make qt6-qtlottie -j4 JOBS=20
 
@@ -108,7 +110,7 @@ RUN cd "/home/xclient/.wine/drive_c/Program Files/Inno Setup 6/Languages" && \
     tar xz --strip-components=4 --wildcards "*/Files/Languages/Unofficial/*.isl"
 
 #Use multi-stage to not keep builds deps and file into the final image to reduce size
-FROM ubuntu:20.04
+FROM ubuntu:22.10
 
 COPY etc/no-man /etc/dpkg/dpkg.cfg.d/01_nodoc
 
@@ -147,7 +149,7 @@ RUN mkdir /work-iscc && chown xclient:xusers -R /work-iscc
 #Install missing dev tools
 RUN apt update && \
     DEBIAN_FRONTEND="noninteractive" apt install -y \
-        make zip unzip wget xz-utils git bzip2 bash curl python cifs-utils sudo rsync \
+        make zip unzip wget xz-utils git bzip2 bash curl python3 python-is-python3 cifs-utils sudo rsync \
         libpcre2-16-0
 
 # Wine really doesn't like to be run as root, so let's use a non-root user

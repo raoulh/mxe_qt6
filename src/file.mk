@@ -4,13 +4,13 @@ PKG             := file
 $(PKG)_WEBSITE  := https://www.darwinsys.com/file/
 $(PKG)_DESCR    := Free File Command and Magic Library
 $(PKG)_IGNORE   :=
-$(PKG)_VERSION  := 5.41
-$(PKG)_CHECKSUM := 13e532c7b364f7d57e23dfeea3147103150cb90593a57af86c10e4f6e411603f
+$(PKG)_VERSION  := 5.43
+$(PKG)_CHECKSUM := 8c8015e91ae0e8d0321d94c78239892ef9dbc70c4ade0008c0e95894abfb1991
 $(PKG)_SUBDIR   := file-$($(PKG)_VERSION)
 $(PKG)_FILE     := file-$($(PKG)_VERSION).tar.gz
 $(PKG)_URL      := https://astron.com/pub/file/$($(PKG)_FILE)
 $(PKG)_URL_2    := https://distfiles.macports.org/file/$($(PKG)_FILE)
-$(PKG)_DEPS     := cc libgnurx
+$(PKG)_DEPS     := cc libgnurx bzip2
 
 define $(PKG)_UPDATE
     $(WGET) -q -O- 'https://astron.com/pub/file/' | \
