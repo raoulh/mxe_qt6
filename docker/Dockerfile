@@ -80,6 +80,8 @@ RUN make qt6-qtwebview -j4 JOBS=20
 RUN make qt6-qtvirtualkeyboard -j4 JOBS=20
 RUN make qt6-qtlottie -j4 JOBS=20
 
+RUN make karchive -j4 JOBS=20
+
 #Install innosetup in another stage
 FROM amake/wine:latest as inno
 USER root

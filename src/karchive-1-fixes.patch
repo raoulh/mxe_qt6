@@ -1,0 +1,24 @@
+This file is part of MXE. See LICENSE.md for licensing information.
+
+Contains ad hoc patches for cross building.
+
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Raoul Hecky <raoul.hecky@gmail.com>
+Date: Mon, 19 Dec 2022 16:17:36 +0100
+Subject: [PATCH 1/1] make karchive build with qt6
+
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 1111111..2222222 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -18,8 +18,7 @@ include(KDEGitCommitHooks)
+ 
+ include(ECMGenerateExportHeader)
+ 
+-set(REQUIRED_QT_VERSION 5.15.2)
+-find_package(Qt${QT_MAJOR_VERSION}Core ${REQUIRED_QT_VERSION} REQUIRED NO_MODULE)
++find_package(Qt6 COMPONENTS Core NO_MODULE)
+ 
+ find_package(ZLIB)
+ set_package_properties(ZLIB PROPERTIES
