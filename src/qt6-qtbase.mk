@@ -4,18 +4,18 @@ PKG             := qt6-qtbase
 $(PKG)_WEBSITE  := https://www.qt.io/
 $(PKG)_DESCR    := Qt 6 Base
 $(PKG)_IGNORE   :=
-$(PKG)_VERSION  := 6.4.0
-$(PKG)_CHECKSUM := cb6475a0bd8567c49f7ffbb072a05516ee6671171bed55db75b22b94ead9b37d
+$(PKG)_VERSION  := 6.6.1
+$(PKG)_CHECKSUM := 450c5b4677b2fe40ed07954d7f0f40690068e80a94c9df86c2c905ccd59d02f7
 $(PKG)_FILE     := qtbase-everywhere-src-$($(PKG)_VERSION).tar.xz
 $(PKG)_SUBDIR   := qtbase-everywhere-src-$($(PKG)_VERSION)
-$(PKG)_URL      := https://download.qt.io/official_releases/qt/6.4/$($(PKG)_VERSION)/submodules/$($(PKG)_FILE)
+$(PKG)_URL      := https://download.qt.io/official_releases/qt/$(call SHORT_PKG_VERSION,$(PKG))/$($(PKG)_VERSION)/submodules/$($(PKG)_FILE)
 $(PKG)_TARGETS  := $(BUILD) $(MXE_TARGETS)
 $(PKG)_DEPS     := cc openssl fontconfig zlib zstd sqlite mesa $(BUILD)~$(PKG) $(BUILD)~qt6-qttools
 $(PKG)_DEPS_$(BUILD) :=
 $(PKG)_OO_DEPS_$(BUILD) += qt6-conf ninja
 
 define $(PKG)_UPDATE
-    $(WGET) -q -O- https://download.qt.io/official_releases/qt/6.4/ | \
+    $(WGET) -q -O- https://download.qt.io/official_releases/qt/6.6/ | \
     $(SED) -n 's,.*href="\(6\.[0-9]*\.[^/]*\)/".*,\1,p' | \
     $(SORT) -V | \
     tail -1
@@ -23,16 +23,16 @@ endef
 
 define $(PKG)_BUILD
     mkdir -p '$(PREFIX)/$(TARGET)/qt6/bin/'
-    cp '$(PREFIX)/$(BUILD)/qt6/libexec/qvkgen' '$(PREFIX)/$(TARGET)/qt6/bin/qvkgen.exe'
     PKG_CONFIG="${TARGET}-pkg-config" \
     PKG_CONFIG_SYSROOT_DIR="/" \
     PKG_CONFIG_LIBDIR="$(PREFIX)/$(TARGET)/lib/pkgconfig" \
-    '$(TARGET)-cmake' -S '$(SOURCE_DIR)' -B '$(BUILD_DIR)' \
+    '$(TARGET)-cmake' --log-level="DEBUG" -S '$(SOURCE_DIR)' -B '$(BUILD_DIR)' \
         -G Ninja \
         -DCMAKE_BUILD_TYPE='$(MXE_BUILD_TYPE)' \
-        -DCMAKE_INSTALL_PREFIX='$(PREFIX)/$(TARGET)/qt6' \
         -DBUILD_SHARED_LIBS=$(CMAKE_SHARED_BOOL) \
-        -DPKG_CONFIG_EXECUTABLE=$(PREFIX)/bin/$(TARGET)-pkg-config \
+        -DBUILD_STATIC_LIBS=$(CMAKE_STATIC_BOOL) \
+        -DCMAKE_INSTALL_PREFIX='$(PREFIX)/$(TARGET)/qt6' \
+        -DPKG_CONFIG_EXECUTABLE='$(PREFIX)/bin/$(TARGET)-pkg-config' \
         -DQT_HOST_PATH='$(PREFIX)/$(BUILD)/qt6' \
         -DQT_QMAKE_TARGET_MKSPEC=win32-g++ \
         -DQT_QMAKE_DEVICE_OPTIONS='CROSS_COMPILE=$(TARGET)-;PKG_CONFIG=$(TARGET)-pkg-config' \
@@ -42,7 +42,7 @@ define $(PKG)_BUILD
         -DQT_BUILD_EXAMPLES_BY_DEFAULT=OFF \
         -DQT_BUILD_TOOLS_BY_DEFAULT=ON \
         -DQT_WILL_BUILD_TOOLS=ON \
-        -DQT_BUILD_TOOLS_WHEN_CROSSCOMPILING=ON \
+        -DQT_FORCE_BUILD_TOOLS=ON \
         -DBUILD_WITH_PCH=OFF \
         -DFEATURE_rpath=OFF \
         -DFEATURE_pkg_config=ON \
@@ -54,7 +54,7 @@ define $(PKG)_BUILD
         -DFEATURE_pcre2=ON \
         -DFEATURE_schannel=ON \
         -DFEATURE_openssl=ON \
-        $(if $(BUILD_SHARED), -DFEATURE_openssl_linked=ON) \
+        -DFEATURE_openssl_linked=$(CMAKE_SHARED_BOOL) \
         -DFEATURE_opengl=ON \
         -DFEATURE_opengl_dynamic=ON \
         -DFEATURE_use_gold_linker_alias=OFF \
@@ -83,25 +83,30 @@ define $(PKG)_BUILD
     cmake --build '$(BUILD_DIR)' -j '$(JOBS)'
     cmake --install '$(BUILD_DIR)'
 
+    $(INSTALL) -m755 '$(PREFIX)/$(BUILD)/qt6/bin/moc' '$(PREFIX)/$(TARGET)/qt6/bin/moc.exe'
+    $(INSTALL) -m755 '$(PREFIX)/$(BUILD)/qt6/bin/rcc' '$(PREFIX)/$(TARGET)/qt6/bin/rcc.exe'
+    $(INSTALL) -m755 '$(PREFIX)/$(BUILD)/qt6/bin/uic' '$(PREFIX)/$(TARGET)/qt6/bin/uic.exe'
+
 endef
 
 define $(PKG)_BUILD_$(BUILD)
     cd '$(BUILD_DIR)' && CXXFLAGS='$(CXXFLAGS) -Wno-unused-but-set-variable' '$(SOURCE_DIR)/configure' \
         -prefix '$(PREFIX)/$(TARGET)/qt6' \
+        -libexecdir '$(PREFIX)/$(TARGET)/qt6/bin' \
         -static \
         -release \
         -opensource \
         -confirm-license \
         -developer-build \
-        -no-{accessibility,glib,openssl,opengl,dbus,fontconfig,icu,harfbuzz,xcb-xlib,xcb,xkbcommon,eventfd,evdev,gif,ico,libjpeg,pch} \
+        -no-{accessibility,glib,openssl,opengl,dbus,fontconfig,icu,harfbuzz,xcb-xlib,xcb,xkbcommon,eventfd,evdev,gif,ico,libjpeg,pch,zstd} \
         -no-sql-{db2,ibase,mysql,oci,odbc,psql,sqlite} \
         -no-use-gold-linker \
+        -make tools \
         -nomake examples \
         -nomake tests \
         -nomake benchmarks \
         -nomake manual-tests \
         -nomake minimal-static-tests \
-        -make tools
 
     '$(TARGET)-cmake' --build '$(BUILD_DIR)' -j '$(JOBS)'
     '$(TARGET)-cmake' --install '$(BUILD_DIR)'

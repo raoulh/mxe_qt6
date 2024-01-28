@@ -1,23 +1,33 @@
 # This file is part of MXE. See LICENSE.md for licensing information.
 
 PKG             := protobuf
+$(PKG)_DESC     := Protocol buffers are a language-neutral, platform-neutral extensible mechanism for serializing structured data
 $(PKG)_WEBSITE  := https://developers.google.com/protocol-buffers/
-$(PKG)_WEBSITE  := Protocol buffers are a language-neutral, platform-neutral extensible mechanism for serializing structured data
 $(PKG)_IGNORE   :=
-$(PKG)_VERSION  := 21.7
-$(PKG)_CHECKSUM := 75be42bd736f4df6d702a0e4e4d30de9ee40eac024c4b845d17ae4cc831fe4ae
-$(PKG)_GH_CONF  := protocolbuffers/protobuf/tags, v
-$(PKG)_DEPS     := cc googletest zlib $(BUILD)~$(PKG)
+$(PKG)_VERSION  := 25.2
+$(PKG)_CHECKSUM := 8ff511a64fc46ee792d3fe49a5a1bcad6f7dc50dfbba5a28b0e5b979c17f9871
+$(PKG)_GH_CONF  := protocolbuffers/protobuf/releases/latest, v
+$(PKG)_DEPS     := cc googletest zlib abseil-cpp $(BUILD)~$(PKG)
 $(PKG)_TARGETS  := $(BUILD) $(MXE_TARGETS)
-$(PKG)_DEPS_$(BUILD) := googletest libtool
+$(PKG)_DEPS_$(BUILD) := googletest libtool abseil-cpp
 
 define $(PKG)_BUILD
     $(call PREPARE_PKG_SOURCE,googletest,$(SOURCE_DIR))
-    cd '$(SOURCE_DIR)' && ./autogen.sh
 
-    cd '$(BUILD_DIR)' && CXXFLAGS='-std=c++17' '$(SOURCE_DIR)'/configure $(MXE_CONFIGURE_OPTS) $(if $(BUILD_CROSS), --with-zlib --with-protoc='$(PREFIX)/$(BUILD)/bin/protoc' )
-    $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)'
+    '$(TARGET)-cmake' -S '$(SOURCE_DIR)' -B '$(BUILD_DIR)' \
+        -DCMAKE_BUILD_TYPE='$(MXE_BUILD_TYPE)' \
+        -DBUILD_SHARED_LIBS=$(CMAKE_SHARED_BOOL) \
+        -DBUILD_STATIC_LIBS=$(CMAKE_STATIC_BOOL) \
+        -DCMAKE_INSTALL_PREFIX='$(PREFIX)/$(TARGET)' \
+        -Dprotobuf_BUILD_SHARED_LIBS=$(CMAKE_SHARED_BOOL) \
+        -Dprotobuf_BUILD_LIBPROTOC=OFF \
+        -Dprotobuf_BUILD_PROTOC_BINARIES=ON \
+        -Dprotobuf_BUILD_TESTS=OFF \
+        -Dprotobuf_BUILD_EXAMPLES=OFF \
+        -Dprotobuf_WITH_ZLIB=ON \
+        -Dprotobuf_ABSL_PROVIDER='package'
+
+    '$(TARGET)-cmake' --build '$(BUILD_DIR)' -j '$(JOBS)'
     $(MAKE) -C '$(BUILD_DIR)' -j 1 install
-
-    $(if $(BUILD_CROSS), '$(TARGET)-g++' -W -Wall -Werror -ansi -pedantic -std=c++17 '$(TEST_FILE)' -o '$(PREFIX)/$(TARGET)/bin/test-protobuf.exe' `'$(TARGET)-pkg-config' protobuf --cflags --libs` )
+    $(INSTALL) -m755 '$(PREFIX)/$(BUILD)/bin/protoc' '$(PREFIX)/$(TARGET)/bin/protoc.exe-$($(PKG)_VERSION).0'
 endef

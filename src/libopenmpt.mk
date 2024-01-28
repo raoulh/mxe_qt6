@@ -4,8 +4,8 @@ PKG             := libopenmpt
 $(PKG)_WEBSITE  := https://lib.openmpt.org/libopenmpt/
 $(PKG)_DESCR    := OpenMPT based module player library
 $(PKG)_IGNORE   :=
-$(PKG)_VERSION  := 0.6.1
-$(PKG)_CHECKSUM := c0bada4bebfc707961111bdb5ff6bbe337f5d71e837e8278f2e362a909eb925b
+$(PKG)_VERSION  := 0.7.3
+$(PKG)_CHECKSUM := 2cf8369b7916b09264f3f14b9fb6cef35a6e9bee0328dec4f49d98211ccfd722
 $(PKG)_SUBDIR   := libopenmpt-$($(PKG)_VERSION)+release.autotools
 $(PKG)_FILE     := libopenmpt-$($(PKG)_VERSION)+release.autotools.tar.gz
 $(PKG)_URL      := https://lib.openmpt.org/files/libopenmpt/src/$($(PKG)_FILE)
@@ -14,8 +14,8 @@ $(PKG)_DEPS     := cc zlib libflac libogg libvorbis portaudio
 define $(PKG)_UPDATE
     $(WGET) -q -O- 'https://lib.openmpt.org/files/libopenmpt/src/' | \
     $(SED) -n 's,.*libopenmpt-\([0-9][^>]*\)+release\.autotools\.tar.*,\1,p' | \
-    $(SORT) -Vr | \
-    head -1
+    $(SORT) -V | \
+    tail -1
 endef
 
 define $(PKG)_BUILD

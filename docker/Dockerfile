@@ -1,4 +1,4 @@
-FROM ubuntu:22.10 as intermediate_builder
+FROM ubuntu:23.04 as intermediate_builder
 
 LABEL maintainer="raoul.hecky@gmail.com"
 LABEL description="Ubuntu image with Qt6 build with mxe"
@@ -49,7 +49,7 @@ WORKDIR /mxe
 COPY mxe_mingw_qt6 /mxe
 
 RUN make dbus fontconfig freetds libmysqlclient openssl postgresql sqlite icu4c zstd -j4 JOBS=20
-RUN make jpeg libwebp xz minizip jasper tiff assimp lcms libmng libxml2 openssl libgit2 -j4 JOBS=20
+RUN make jpeg libwebp xz minizip jasper tiff lcms libmng libxml2 openssl libgit2 -j4 JOBS=20
 
 RUN make qt6-qtbase -j4 JOBS=20
 RUN make qt6-qttools -j4 JOBS=20
@@ -59,7 +59,7 @@ RUN make qt6-qtshadertools -j4 JOBS=20
 RUN make qt6-declarative -j4 JOBS=20
 RUN make qt6-qtactiveqt -j4 JOBS=20
 #RUN make qt6-qt3d -j4 JOBS=20
-RUN make qt6-qtcharts -j4 JOBS=20
+#RUN make qt6-qtcharts -j4 JOBS=20
 RUN make qt6-qtconnectivity -j4 JOBS=20
 RUN make qt6-qtcore5compat -j4 JOBS=20
 #RUN make qt6-qtdatavis3d -j4 JOBS=20
@@ -77,8 +77,9 @@ RUN make qt6-qtwebsockets -j4 JOBS=20
 RUN make qt6-qtwebchannel -j4 JOBS=20
 RUN make qt6-qtwebview -j4 JOBS=20
 #RUN make qt6-qtmultimedia -j4 JOBS=20
-RUN make qt6-qtvirtualkeyboard -j4 JOBS=20
-RUN make qt6-qtlottie -j4 JOBS=20
+#RUN make qt6-qtvirtualkeyboard -j4 JOBS=20
+#RUN make qt6-qtlottie -j4 JOBS=20
+RUN make qt6-qtmqtt -j4 JOBS=20
 
 RUN make karchive -j4 JOBS=20
 
@@ -112,11 +113,15 @@ RUN cd "/home/xclient/.wine/drive_c/Program Files/Inno Setup 6/Languages" && \
     tar xz --strip-components=4 --wildcards "*/Files/Languages/Unofficial/*.isl"
 
 #Use multi-stage to not keep builds deps and file into the final image to reduce size
-FROM ubuntu:22.10
+FROM ubuntu:23.04
 
 COPY etc/no-man /etc/dpkg/dpkg.cfg.d/01_nodoc
 
 COPY --from=intermediate_builder /mxe/usr /mxe/usr
+
+RUN apt update && \
+    DEBIAN_FRONTEND="noninteractive" apt install -y \
+        adduser
 
 RUN addgroup --system xusers \
     && adduser \

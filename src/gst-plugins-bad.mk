@@ -4,12 +4,12 @@ PKG             := gst-plugins-bad
 $(PKG)_WEBSITE  := https://gstreamer.freedesktop.org/modules/gst-plugins-bad.html
 $(PKG)_DESCR    := Open Source Multimedia Framework
 $(PKG)_IGNORE   :=
-$(PKG)_VERSION  := 1.20.0
-$(PKG)_CHECKSUM := 015b8d4d9a395ebf444d40876867a2034dd3304b3ad48bc3a0dd0c1ee71dc11d
+$(PKG)_VERSION  := 1.22.9
+$(PKG)_CHECKSUM := 1bc65d0fd5f53a3636564efd3fcf318c3edcdec39c4109a503c1fc8203840a1d
 $(PKG)_SUBDIR   := $(PKG)-$($(PKG)_VERSION)
 $(PKG)_FILE     := $(PKG)-$($(PKG)_VERSION).tar.xz
 $(PKG)_URL      := https://gstreamer.freedesktop.org/src/$(PKG)/$($(PKG)_FILE)
-$(PKG)_DEPS     := cc gstreamer gst-plugins-base gst-plugins-good libgcrypt libxml2 libopus faad2 faac musepack chromaprint libopenmpt fdk-aac
+$(PKG)_DEPS     := cc gstreamer gst-plugins-base gst-plugins-good libgcrypt libxml2 libopus faad2 faac musepack chromaprint libopenmpt fdk-aac libgme libbs2b
 
 $(PKG)_UPDATE = $(gstreamer_UPDATE)
 
@@ -35,6 +35,7 @@ define $(PKG)_BUILD
         -Dbayer=disabled \
         -Dcamerabin2=disabled \
         -Dcodecalpha=disabled \
+        -Dcodectimestamper=disabled \
         -Dcoloreffects=disabled \
         -Ddebugutils=disabled \
         -Ddvbsubenc=disabled \
@@ -57,17 +58,16 @@ define $(PKG)_BUILD
         -Djpegformat=disabled \
         -Dlibrfb=disabled \
         -Dmidi=disabled \
-        -Dmpegdemux=disabled \
-        -Dmpegpsmux=disabled \
-        -Dmpegtsdemux=disabled \
-        -Dmpegtsmux=disabled \
+        -Dmpegdemux=enabled \
+        -Dmpegpsmux=enabled \
+        -Dmpegtsdemux=enabled \
+        -Dmpegtsmux=enabled \
         -Dmxf=disabled \
         -Dnetsim=disabled \
         -Donvif=disabled \
         -Dpcapparse=disabled \
         -Dpnm=disabled \
         -Dproxy=disabled \
-        -Dqroverlay=disabled \
         -Drawparse=disabled \
         -Dremovesilence=enabled \
         -Drist=disabled \
@@ -93,6 +93,7 @@ define $(PKG)_BUILD
         -Daes=enabled \
         -Daom=disabled \
         -Davtp=disabled \
+        -Damfcodec=disabled \
         -Dandroidmedia=disabled \
         -Dapplemedia=disabled \
         -Dasio=disabled \
@@ -112,6 +113,7 @@ define $(PKG)_BUILD
         -Ddecklink=disabled \
         -Ddirectfb=disabled \
         -Ddirectsound=enabled \
+        -Ddirectshow=disabled \
         -Ddtls=disabled \
         -Ddts=disabled \
         -Ddvb=disabled \
@@ -122,9 +124,10 @@ define $(PKG)_BUILD
         -Dflite=disabled \
         -Dfluidsynth=disabled \
         -Dgl=disabled \
-        -Dgme=disabled \
+        -Dgme=enabled \
         -Dgs=disabled \
         -Dgsm=disabled \
+        -Dgtk3=disabled \
         -Dipcpipeline=disabled \
         -Diqa=disabled \
         -Dkate=disabled \
@@ -152,6 +155,8 @@ define $(PKG)_BUILD
         -Dopenni2=disabled \
         -Dopensles=disabled \
         -Dopus=enabled \
+        -Dqroverlay=disabled \
+        -Dqsv=disabled \
         -Dresindvd=disabled \
         -Drsvg=disabled \
         -Drtmp=disabled \
@@ -180,6 +185,8 @@ define $(PKG)_BUILD
         -Dwebrtc=disabled \
         -Dwebrtcdsp=disabled \
         -Dwildmidi=disabled \
+        -Dwic=disabled \
+        -Dwin32ipc=disabled \
         -Dwinks=disabled \
         -Dwinscreencap=disabled \
         -Dx265=disabled \

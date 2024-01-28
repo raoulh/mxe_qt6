@@ -4,21 +4,16 @@ PKG             := faad2
 $(PKG)_WEBSITE  := http://faac.sourceforge.net/
 $(PKG)_DESCR    := Freeware Advanced Audio Coder
 $(PKG)_IGNORE   :=
-$(PKG)_VERSION  := 2.8.8
-$(PKG)_CHECKSUM := 985c3fadb9789d2815e50f4ff714511c79c2710ac27a4aaaf5c0c2662141426d
-$(PKG)_SUBDIR   := $(PKG)-$($(PKG)_VERSION)
-$(PKG)_FILE     := $(PKG)-$($(PKG)_VERSION).tar.gz
-$(PKG)_URL      := https://$(SOURCEFORGE_MIRROR)/project/faac/$(PKG)-src/$(PKG)-2.8.0/$($(PKG)_FILE)
+$(PKG)_VERSION  := 2.11.1
+$(PKG)_CHECKSUM := 72dbc0494de9ee38d240f670eccf2b10ef715fd0508c305532ca3def3225bb06
+$(PKG)_GH_CONF  := knik0/faad2/releases/latest
 $(PKG)_DEPS     := cc
 
-define $(PKG)_UPDATE
-    $(WGET) -q -O- 'https://sourceforge.net/projects/faac/files/faad2-src/faad2-2.8.0/' | \
-    $(SED) -n 's,.*faad2-\([0-9][^"]*\).tar.gz".*,\1,p' | \
-    head -1
-endef
-
 define $(PKG)_BUILD
-    cd '$(1)' && ./configure $(MXE_CONFIGURE_OPTS)
-    $(MAKE) -C '$(1)' -j '$(JOBS)' LDFLAGS='-no-undefined'
-    $(MAKE) -C '$(1)' -j 1 install LDFLAGS='-no-undefined'
+    '$(TARGET)-cmake' -S '$(SOURCE_DIR)' -B '$(BUILD_DIR)' \
+        -DCMAKE_BUILD_TYPE='$(MXE_BUILD_TYPE)' \
+        -DBUILD_SHARED_LIBS=$(CMAKE_SHARED_BOOL) \
+        -DBUILD_STATIC_LIBS=$(CMAKE_STATIC_BOOL)
+    $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)'
+    $(MAKE) -C '$(BUILD_DIR)' -j 1 install
 endef

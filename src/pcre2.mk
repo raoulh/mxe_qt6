@@ -4,8 +4,8 @@ PKG             := pcre2
 $(PKG)_WEBSITE  := https://www.pcre.org/
 $(PKG)_DESCR    := Perl Compatible Regular Expressions Library
 $(PKG)_IGNORE   :=
-$(PKG)_VERSION  := 10.40
-$(PKG)_CHECKSUM := 14e4b83c4783933dc17e964318e6324f7cae1bc75d8f3c79bc6969f00c159d68
+$(PKG)_VERSION  := 10.42
+$(PKG)_CHECKSUM := 8d36cd8cb6ea2a4c2bb358ff6411b0c788633a2a45dabbf1aeb4b701d1b5e840
 $(PKG)_GH_CONF  := PhilipHazel/pcre2/releases/latest, pcre2-
 $(PKG)_SUBDIR   := pcre2-$($(PKG)_VERSION)
 $(PKG)_FILE     := pcre2-$($(PKG)_VERSION).tar.bz2
@@ -13,15 +13,16 @@ $(PKG)_URL      := https://github.com/PhilipHazel/pcre2/releases/download/$(PKG)
 $(PKG)_DEPS     := cc
 
 define $(PKG)_BUILD_SHARED
-   cd '$(BUILD_DIR)' && $(TARGET)-cmake \
-       -DPCRE2_SUPPORT_UNICODE=ON \
-       -DPCRE2_BUILD_PCRE2_8=ON \
-       -DPCRE2_BUILD_PCRE2_16=ON \
-       -DPCRE2_BUILD_PCRE2_32=ON \
-       -DPCRE2_SUPPORT_UNICODE=ON \
-       -DPCRE2_BUILD_TESTS=OFF \
-       -DPCRE2_BUILD_PCRE2GREP=OFF \
-       '$(SOURCE_DIR)'
+    '$(TARGET)-cmake' -S '$(SOURCE_DIR)' -B '$(BUILD_DIR)' \
+        -DCMAKE_BUILD_TYPE='$(MXE_BUILD_TYPE)' \
+        -DBUILD_SHARED_LIBS=$(CMAKE_SHARED_BOOL) \
+        -DBUILD_STATIC_LIBS=$(CMAKE_STATIC_BOOL) \
+        -DPCRE2_SUPPORT_UNICODE=ON \
+        -DPCRE2_BUILD_PCRE2_8=ON \
+        -DPCRE2_BUILD_PCRE2_16=ON \
+        -DPCRE2_BUILD_PCRE2_32=ON \
+        -DPCRE2_BUILD_TESTS=OFF \
+        -DPCRE2_BUILD_PCRE2GREP=OFF
     $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)'
     $(MAKE) -C '$(BUILD_DIR)' -j 1 install
     rm -f '$(PREFIX)/$(TARGET)'/share/man/man1/pcre*.1

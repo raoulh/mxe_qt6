@@ -4,13 +4,16 @@ PKG             := nghttp2
 $(PKG)_WEBSITE  := https://nghttp2.org/
 $(PKG)_DESCR    := HTTP/2 C Library and tools
 $(PKG)_IGNORE   :=
-$(PKG)_VERSION  := 1.50.0
-$(PKG)_CHECKSUM := 6de469efc8e9d47059327a6736aebe0a7d73f57e5e37ab4c4f838fb1eebd7889
-$(PKG)_GH_CONF  := nghttp2/nghttp2/tags, v
+$(PKG)_VERSION  := 1.59.0
+$(PKG)_CHECKSUM := 90fd27685120404544e96a60ed40398a3457102840c38e7215dc6dec8684470f
+$(PKG)_GH_CONF  := nghttp2/nghttp2/releases/latest, v
 $(PKG)_DEPS     := cc openssl zlib libxml2 cares
 
 define $(PKG)_BUILD
-    cd '$(BUILD_DIR)' && $(TARGET)-cmake -DCMAKE_BUILD_TYPE='$(MXE_BUILD_TYPE)' '$(SOURCE_DIR)'
+    '$(TARGET)-cmake' -S '$(SOURCE_DIR)' -B '$(BUILD_DIR)' \
+        -DCMAKE_BUILD_TYPE='$(MXE_BUILD_TYPE)' \
+        -DBUILD_SHARED_LIBS=$(CMAKE_SHARED_BOOL) \
+        -DBUILD_STATIC_LIBS=$(CMAKE_STATIC_BOOL)
     $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)'
     $(MAKE) -C '$(BUILD_DIR)' -j 1 install
     $(if $(BUILD_STATIC),rm -fv $(shell echo '$(PREFIX)/$(TARGET)/lib/libnghttp2.dll.a'),)

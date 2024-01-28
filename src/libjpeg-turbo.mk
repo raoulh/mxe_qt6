@@ -4,8 +4,8 @@ PKG             := libjpeg-turbo
 $(PKG)_WEBSITE  := https://libjpeg-turbo.org/
 $(PKG)_DESCR    := Free library for JPEG image compression
 $(PKG)_IGNORE   :=
-$(PKG)_VERSION  := 2.1.4
-$(PKG)_CHECKSUM := d3ed26a1131a13686dfca4935e520eb7c90ae76fbc45d98bb50a8dc86230342b
+$(PKG)_VERSION  := 3.0.1
+$(PKG)_CHECKSUM := 22429507714ae147b3acacd299e82099fce5d9f456882fc28e252e4579ba2a75
 $(PKG)_SUBDIR   := $(PKG)-$($(PKG)_VERSION)
 $(PKG)_FILE     := $(PKG)-$($(PKG)_VERSION).tar.gz
 $(PKG)_URL      := https://$(SOURCEFORGE_MIRROR)/project/$(PKG)/$($(PKG)_VERSION)/$($(PKG)_FILE)
@@ -19,7 +19,8 @@ define $(PKG)_UPDATE
 endef
 
 define $(PKG)_BUILD
-    cd '$(BUILD_DIR)' && $(TARGET)-cmake '$(SOURCE_DIR)' \
+    $(TARGET)-cmake -S '$(SOURCE_DIR)' -B '$(BUILD_DIR)' \
+        -DCMAKE_BUILD_TYPE='$(MXE_BUILD_TYPE)' \
         -DENABLE_SHARED=$(CMAKE_SHARED_BOOL) \
         -DENABLE_STATIC=$(CMAKE_STATIC_BOOL) \
         -DCMAKE_INSTALL_BINDIR='$(PREFIX)/$(TARGET)/bin/$(PKG)' \

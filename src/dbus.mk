@@ -4,8 +4,8 @@ PKG             := dbus
 $(PKG)_WEBSITE  := https://dbus.freedesktop.org/
 $(PKG)_DESCR    := D-Bus is a message bus system
 $(PKG)_IGNORE   :=
-$(PKG)_VERSION  := 1.15.2
-$(PKG)_CHECKSUM := 7e640803084af59f5e477b7ded11fd888b5380910a895c51ca3aedd63c0626ca
+$(PKG)_VERSION  := 1.15.8
+$(PKG)_CHECKSUM := 84fc597e6ec82f05dc18a7d12c17046f95bad7be99fc03c15bc254c4701ed204
 $(PKG)_SUBDIR   := $(PKG)-$($(PKG)_VERSION)
 $(PKG)_FILE     := $(PKG)-$($(PKG)_VERSION).tar.xz
 $(PKG)_URL      := https://$(PKG).freedesktop.org/releases/$(PKG)/$($(PKG)_FILE)
@@ -19,17 +19,10 @@ define $(PKG)_UPDATE
 endef
 
 define $(PKG)_BUILD
-    cd '$(1)' && ./configure \
-        $(MXE_CONFIGURE_OPTS) \
-        --disable-tests \
-        --disable-verbose-mode \
-        --disable-asserts \
-        --disable-maintainer-mode \
-        --disable-silent-rules \
-        --disable-launchd \
-        --disable-doxygen-docs \
-        --disable-xml-docs \
-        CFLAGS='$(CFLAGS) -DPROCESS_QUERY_LIMITED_INFORMATION=0x1000'
-    $(MAKE) -C '$(1)' -j '$(JOBS)'
-    $(MAKE) -C '$(1)' -j 1 install
+    '$(TARGET)-cmake' -S '$(SOURCE_DIR)' -B '$(BUILD_DIR)' \
+        -DCMAKE_BUILD_TYPE='$(MXE_BUILD_TYPE)' \
+        -DBUILD_SHARED_LIBS=$(CMAKE_SHARED_BOOL) \
+        -DBUILD_STATIC_LIBS=$(CMAKE_STATIC_BOOL)
+    $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)'
+    $(MAKE) -C '$(BUILD_DIR)' -j 1 install
 endef

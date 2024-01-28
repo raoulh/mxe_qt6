@@ -4,12 +4,11 @@ PKG             := libxml2
 $(PKG)_WEBSITE  := http://www.xmlsoft.org/
 $(PKG)_DESCR    := The XML C parser and toolkit of Gnome
 $(PKG)_IGNORE   :=
-$(PKG)_VERSION  := 2.10.3
-$(PKG)_CHECKSUM := 497f12e34790d407ec9e2a190d576c0881a1cd78ff3c8991d1f9e40281a5ff57
-$(PKG)_SUBDIR   := $(PKG)-v$($(PKG)_VERSION)
-$(PKG)_FILE     := $(PKG)-v$($(PKG)_VERSION).tar.gz
-$(PKG)_URL      := https://gitlab.gnome.org/GNOME/$(PKG)/-/archive/v$($(PKG)_VERSION)/$($(PKG)_FILE)
-$(PKG)_URL_2    := http://xmlsoft.org/sources/$($(PKG)_FILE)
+$(PKG)_VERSION  := 2.12.4
+$(PKG)_CHECKSUM := 497360e423cf0bd99eacdb7c6215dea92e6d6e89ee940393c2bae0e77cb9b7d0
+$(PKG)_SUBDIR   := $(PKG)-$($(PKG)_VERSION)
+$(PKG)_FILE     := $(PKG)-$($(PKG)_VERSION).tar.xz
+$(PKG)_URL      := https://download.gnome.org/sources/$(PKG)/$(call SHORT_PKG_VERSION,$(PKG))/$($(PKG)_FILE)
 $(PKG)_DEPS     := cc xz zlib
 
 define $(PKG)_UPDATE

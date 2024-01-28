@@ -12,7 +12,7 @@ diff --git a/src/quick/scenegraph/qsgrhisupport.cpp b/src/quick/scenegraph/qsgrh
 index 1111111..2222222 100644
 --- a/src/quick/scenegraph/qsgrhisupport.cpp
 +++ b/src/quick/scenegraph/qsgrhisupport.cpp
-@@ -1402,6 +1402,8 @@ void QSGRhiSupport::applySwapChainFormat(QRhiSwapChain *scWithWindowSet)
+@@ -1506,6 +1506,8 @@ void QSGRhiSupport::applySwapChainFormat(QRhiSwapChain *scWithWindowSet)
  
  QRhiTexture::Format QSGRhiSupport::toRhiTextureFormat(uint nativeFormat, QRhiTexture::Flags *flags) const
  {
@@ -21,3 +21,5 @@ index 1111111..2222222 100644
      switch (m_rhiBackend) {
  #if QT_CONFIG(vulkan)
      case QRhi::Vulkan:
+
+

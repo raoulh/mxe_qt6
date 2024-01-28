@@ -4,12 +4,12 @@ PKG             := gst-plugins-good
 $(PKG)_WEBSITE  := https://gstreamer.freedesktop.org/modules/gst-plugins-good.html
 $(PKG)_DESCR    := Open Source Multimedia Framework
 $(PKG)_IGNORE   :=
-$(PKG)_VERSION  := 1.20.0
-$(PKG)_CHECKSUM := 2d119c15ab8c9e79f8cd3c6bf582ff7a050b28ccae52ab4865e1a1464991659c
+$(PKG)_VERSION  := 1.22.9
+$(PKG)_CHECKSUM := 26959fcfebfff637d4ea08ef40316baf31b61bb7729820b0684e800c3a1478b6
 $(PKG)_SUBDIR   := $(PKG)-$($(PKG)_VERSION)
 $(PKG)_FILE     := $(PKG)-$($(PKG)_VERSION).tar.xz
 $(PKG)_URL      := https://gstreamer.freedesktop.org/src/$(PKG)/$($(PKG)_FILE)
-$(PKG)_DEPS     := cc glib libflac speex wavpack mpg123 lame libsoup taglib libbs2b gstreamer gst-plugins-base
+$(PKG)_DEPS     := cc glib libflac speex wavpack mpg123 lame twolame libsoup taglib gstreamer gst-plugins-base
 
 $(PKG)_UPDATE = $(gstreamer_UPDATE)
 
@@ -62,7 +62,9 @@ define $(PKG)_BUILD
         -Dvideomixer=disabled \
         -Dwavenc=enabled \
         -Dwavparse=enabled \
+        -Dxingmux=enabled \
         -Dy4m=disabled \
+        -Dadaptivedemux2=enabled \
         -Daalib=disabled \
         -Dbz2=disabled \
         -Dcairo=disabled \
@@ -83,19 +85,20 @@ define $(PKG)_BUILD
         -Dosxvideo=disabled \
         -Dpng=disabled \
         -Dpulse=disabled \
-        -Dqt5=disabled \
         -Dshout2=disabled \
-        -Dsoup=enabled \
         -Dspeex=enabled \
         -Dtaglib=enabled \
-        -Dtwolame=disabled \
+        -Dtwolame=enabled \
         -Dvpx=disabled \
         -Dwaveform=enabled \
         -Dwavpack=enabled \
+        -Dsoup=enabled \
+        -Dqt5=disabled \
         -Dximagesrc=disabled \
         -Dv4l2=disabled \
         -Dv4l2-libv4l2=disabled \
         -Dv4l2-gudev=disabled \
+        -Dhls-crypto=openssl \
         '$(BUILD_DIR)'
 
     cd '$(BUILD_DIR)' && ninja

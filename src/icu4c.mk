@@ -4,12 +4,12 @@ PKG             := icu4c
 $(PKG)_WEBSITE  := https://icu.unicode.org/
 $(PKG)_DESCR    := ICU4C
 $(PKG)_IGNORE   :=
-$(PKG)_VERSION  := 71.1
+$(PKG)_VERSION  := 74.1
 $(PKG)_MAJOR    := $(word 1,$(subst ., ,$($(PKG)_VERSION)))
-$(PKG)_CHECKSUM := d88a4ea7a4a28b445bb073a6cfeb2a296bf49a4a2fe5f1b49f87ecb4fc55c51d
+$(PKG)_CHECKSUM := 86ce8e60681972e60e4dcb2490c697463fcec60dd400a5f9bffba26d0b52b8d0
 $(PKG)_GH_CONF  := unicode-org/icu/releases/latest,release-,,,-
-$(PKG)_SUBDIR   := icu-release-$(subst .,-,$($(PKG)_VERSION))/$(PKG)
-$(PKG)_URL      := $($(PKG)_WEBSITE)/releases/download/release-$(subst .,-,$($(PKG)_VERSION))/icu4c-$(subst .,_,$($(PKG)_VERSION))-src.tgz
+$(PKG)_SUBDIR   := icu/source
+$(PKG)_URL      := https://github.com/unicode-org/icu/releases/download/release-$(subst .,-,$($(PKG)_VERSION))/icu4c-$(subst .,_,$($(PKG)_VERSION))-src.tgz
 $(PKG)_DEPS     := cc $(BUILD)~$(PKG)
 
 $(PKG)_TARGETS       := $(BUILD) $(MXE_TARGETS)
@@ -20,7 +20,7 @@ define $(PKG)_BUILD_$(BUILD)
     # cross build requires artefacts from native build tree
     rm -rf '$(PREFIX)/$(BUILD)/$(PKG)'
     $(INSTALL) -d '$(PREFIX)/$(BUILD)/$(PKG)'
-    cd '$(PREFIX)/$(BUILD)/$(PKG)' && '$(SOURCE_DIR)/source/configure' CC=$(BUILD_CC) CXX=$(BUILD_CXX) --enable-tests=no --enable-samples=no
+    cd '$(PREFIX)/$(BUILD)/$(PKG)' && '$(SOURCE_DIR)/configure' CC=$(BUILD_CC) CXX=$(BUILD_CXX) --enable-tests=no --enable-samples=no
     $(MAKE) -C '$(PREFIX)/$(BUILD)/$(PKG)' -j '$(JOBS)'
 
 endef
@@ -28,7 +28,7 @@ endef
 define $(PKG)_BUILD_COMMON
 
     rm -fv $(shell echo "$(PREFIX)/$(TARGET)"/{bin,lib}/{lib,libs,}icu'*'.{a,dll,dll.a})
-    cd '$(BUILD_DIR)' && '$(SOURCE_DIR)/source/configure' $(MXE_CONFIGURE_OPTS) --with-cross-build='$(PREFIX)/$(BUILD)/$(PKG)' --enable-icu-config=no SHELL=$(SHELL) LIBS='-lstdc++' $($(PKG)_CONFIGURE_OPTS)
+    cd '$(BUILD_DIR)' && '$(SOURCE_DIR)/configure' $(MXE_CONFIGURE_OPTS) --with-cross-build='$(PREFIX)/$(BUILD)/$(PKG)' --enable-icu-config=no SHELL=$(SHELL) LIBS='-lstdc++' $($(PKG)_CONFIGURE_OPTS)
 
     $(MAKE) -C '$(BUILD_DIR)' -j '$(JOBS)' VERBOSE=1 SO_TARGET_VERSION_SUFFIX=
     $(MAKE) -C '$(BUILD_DIR)' -j 1 install VERBOSE=1 SO_TARGET_VERSION_SUFFIX=
